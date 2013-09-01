@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "message.h"
 #include "parser.h"
@@ -37,7 +38,12 @@ int main(int argc, char** argv) {
     printf("    offset: %zu\n", nread);
     rc = mqtt_parser_execute(&parser, &message, data, sizeof data, &nread);
     printf("    rc: %d\n", rc);
-  } while (rc == MQTT_PARSER_RC_CONTINUE);
+
+    if (rc == MQTT_PARSER_RC_WANT_MEMORY) {
+      printf("    bytes requested: %zu\n", parser.buffer_length);
+      mqtt_parser_buffer(&parser, NULL, 0);
+    }
+  } while (rc == MQTT_PARSER_RC_CONTINUE || rc == MQTT_PARSER_RC_WANT_MEMORY);
 
   printf("\n");
   printf("parser info\n");

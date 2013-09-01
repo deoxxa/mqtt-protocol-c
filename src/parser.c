@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stddef.h>
+#include <string.h>
 
 #include "errors.h"
 #include "message.h"
@@ -8,6 +9,15 @@
 
 void mqtt_parser_init(mqtt_parser_t* parser) {
   parser->state = MQTT_PARSER_STATE_INITIAL;
+  parser->buffer_pending = 0;
+  parser->buffer = NULL;
+  parser->buffer_length = 0;
+}
+
+void mqtt_parser_buffer(mqtt_parser_t* parser, uint8_t* buffer, size_t buffer_length) {
+  parser->buffer_pending = 1;
+  parser->buffer = buffer;
+  parser->buffer_length = buffer_length;
 }
 
 int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t* data, size_t len, size_t* nread) {
@@ -78,7 +88,19 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
       return MQTT_PARSER_RC_INCOMPLETE;
     }
 
-    // do something with the name
+    if (parser->buffer_pending == 0) {
+      parser->buffer_length = name_length;
+
+      return MQTT_PARSER_RC_WANT_MEMORY;
+    }
+
+    parser->buffer_pending = 0;
+
+    if (parser->buffer != NULL) {
+      memcpy(parser->buffer, nread + 2, parser->buffer_length);
+      parser->buffer_length = 0;
+      parser->buffer = NULL;
+    }
 
     *nread += 2 + name_length;
 

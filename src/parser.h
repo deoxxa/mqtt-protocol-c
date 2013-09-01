@@ -11,6 +11,7 @@
 #define MQTT_PARSER_RC_CONTINUE 0
 #define MQTT_PARSER_RC_INCOMPLETE 1
 #define MQTT_PARSER_RC_DONE 2
+#define MQTT_PARSER_RC_WANT_MEMORY 3
 
 typedef enum mqtt_parser_state_e {
   MQTT_PARSER_STATE_INITIAL = 0,
@@ -29,9 +30,13 @@ typedef enum mqtt_parser_state_e {
 typedef struct mqtt_parser_s {
   mqtt_parser_state_t state;
   mqtt_error_t error;
+  char buffer_pending;
+  uint8_t* buffer;
+  size_t buffer_length;
 } mqtt_parser_t;
 
 void mqtt_parser_init(mqtt_parser_t* parser);
+void mqtt_parser_buffer(mqtt_parser_t* parser, uint8_t* buffer, size_t buffer_length);
 int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t* data, size_t len, size_t* nread);
 
 #endif
