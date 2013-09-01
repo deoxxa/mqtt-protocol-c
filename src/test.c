@@ -27,6 +27,7 @@ int main(int argc, char** argv) {
   };
 
   mqtt_parser_init(&parser);
+  mqtt_message_init(&message);
 
   size_t nread = 0;
   int rc = 0, loops = 0;
@@ -41,7 +42,7 @@ int main(int argc, char** argv) {
 
     if (rc == MQTT_PARSER_RC_WANT_MEMORY) {
       printf("    bytes requested: %zu\n", parser.buffer_length);
-      mqtt_parser_buffer(&parser, NULL, 0);
+      mqtt_parser_buffer(&parser, malloc(parser.buffer_length), parser.buffer_length);
     }
   } while (rc == MQTT_PARSER_RC_CONTINUE || rc == MQTT_PARSER_RC_WANT_MEMORY);
 
@@ -56,12 +57,8 @@ int main(int argc, char** argv) {
   printf("\n");
 
   printf("message info\n");
-  printf("  type: %d\n", message.type);
-  printf("  qos: %d\n", message.qos);
-  printf("  dup: %d\n", message.dup);
-  printf("  retain: %d\n", message.retain);
-  printf("  length: %d\n", message.length);
   printf("\n");
+  mqtt_message_dump(&message);
 
   return 0;
 }

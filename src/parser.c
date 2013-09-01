@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
+#include <math.h>
 
 #include "errors.h"
 #include "message.h"
@@ -26,10 +27,12 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
       return MQTT_PARSER_RC_INCOMPLETE;
     }
 
-    message->retain = (data[*nread + 0] >> 0) & 0x01;
-    message->qos    = (data[*nread + 0] >> 1) & 0x03;
-    message->dup    = (data[*nread + 0] >> 3) & 0x01;
-    message->type   = (data[*nread + 0] >> 4) & 0x0f;
+    message->header.retain = (data[*nread + 0] >> 0) & 0x01;
+    message->header.qos    = (data[*nread + 0] >> 1) & 0x03;
+    message->header.dup    = (data[*nread + 0] >> 3) & 0x01;
+    message->header.type   = (data[*nread + 0] >> 4) & 0x0f;
+
+    message->payload.type  = message->header.type;
 
     *nread += 1;
 
@@ -54,7 +57,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
       multiplier *= 128;
 
       if (data[*nread + digit_bytes - 1] <= 0x7f) {
-        message->length = value;
+        message->header.length = value;
 
         *nread += digit_bytes;
 
@@ -70,7 +73,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
   }
 
   if (parser->state == MQTT_PARSER_STATE_VARIABLE_HEADER) {
-    if (message->type == MQTT_MESSAGE_TYPE_CONNECT) {
+    if (message->header.type == MQTT_MESSAGE_TYPE_CONNECT) {
       parser->state = MQTT_PARSER_STATE_CONNECT_PROTOCOL_NAME;
 
       return MQTT_PARSER_RC_CONTINUE;
@@ -97,9 +100,13 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
     parser->buffer_pending = 0;
 
     if (parser->buffer != NULL) {
-      memcpy(parser->buffer, nread + 2, parser->buffer_length);
-      parser->buffer_length = 0;
+      memcpy(parser->buffer, data + *nread + 2, fmin(name_length, parser->buffer_length));
+
+      message->payload.connect.protocol_name.length = fmin(name_length, parser->buffer_length);
+      message->payload.connect.protocol_name.data = parser->buffer;
+
       parser->buffer = NULL;
+      parser->buffer_length = 0;
     }
 
     *nread += 2 + name_length;
@@ -126,11 +133,25 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
       return MQTT_PARSER_RC_INCOMPLETE;
     }
 
+    message->payload.connect.flags.raw = data[*nread];
+
     *nread += 1;
 
-    parser->state = MQTT_PARSER_STATE_CONNECT_CLIENT_IDENTIFIER;
+    parser->state = MQTT_PARSER_STATE_CONNECT_KEEP_ALIVE;
 
     return MQTT_PARSER_RC_CONTINUE;
+  }
+
+  if (parser->state == MQTT_PARSER_STATE_CONNECT_KEEP_ALIVE) {
+    if ((len - *nread) < 2) {
+      return MQTT_PARSER_RC_INCOMPLETE;
+    }
+
+    message->payload.connect.keep_alive = (data[*nread] << 8) + data[*nread + 1];
+
+    *nread += 2;
+
+    parser->state = MQTT_PARSER_STATE_CONNECT_CLIENT_IDENTIFIER;
   }
 
   parser->error = MQTT_ERROR_PARSER_INVALID_STATE;
