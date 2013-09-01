@@ -1,10 +1,12 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "header.h"
 
 #include "payload.h"
 
 void mqtt_payload_init(mqtt_payload_t* payload) {
+  memset(payload, 0, sizeof (mqtt_payload_t));
 }
 
 void mqtt_payload_dump(mqtt_payload_t* payload) {
