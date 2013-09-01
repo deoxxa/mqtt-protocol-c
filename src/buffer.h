@@ -9,5 +9,7 @@ typedef struct mqtt_buffer_s {
 } mqtt_buffer_t;
 
 void mqtt_buffer_dump(mqtt_buffer_t* buffer);
+void mqtt_buffer_dump_ascii(mqtt_buffer_t* buffer);
+void mqtt_buffer_dump_hex(mqtt_buffer_t* buffer);
 
 #endif
