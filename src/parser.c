@@ -121,6 +121,8 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
       return MQTT_PARSER_RC_INCOMPLETE;
     }
 
+    message->payload.connect.protocol_version = data[*nread];
+
     *nread += 1;
 
     parser->state = MQTT_PARSER_STATE_CONNECT_FLAGS;

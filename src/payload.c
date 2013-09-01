@@ -12,8 +12,10 @@ void mqtt_payload_dump(mqtt_payload_t* payload) {
   printf("  type: %d\n", payload->type);
 
   if (payload->type == MQTT_MESSAGE_TYPE_CONNECT) {
-    printf("  protocol_name: ");
+    printf("  protocol name: ");
     mqtt_buffer_dump(&(payload->connect.protocol_name));
     printf("\n");
+
+    printf("  protocol version: %d\n", payload->connect.protocol_version);
   }
 }
