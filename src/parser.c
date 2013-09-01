@@ -70,7 +70,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
 
     parser->state = MQTT_PARSER_STATE_REMAINING_LENGTH;
 
-    return MQTT_PARSER_RC_CONTINUE;
+    //return MQTT_PARSER_RC_CONTINUE;
   }
 
   if (parser->state == MQTT_PARSER_STATE_REMAINING_LENGTH) {
@@ -108,7 +108,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
     if (message->header.type == MQTT_MESSAGE_TYPE_CONNECT) {
       parser->state = MQTT_PARSER_STATE_CONNECT_PROTOCOL_NAME;
 
-      return MQTT_PARSER_RC_CONTINUE;
+      //return MQTT_PARSER_RC_CONTINUE;
     }
   }
 
@@ -117,7 +117,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
 
     parser->state = MQTT_PARSER_STATE_CONNECT_PROTOCOL_VERSION;
 
-    return MQTT_PARSER_RC_CONTINUE;
+    //return MQTT_PARSER_RC_CONTINUE;
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_PROTOCOL_VERSION) {
@@ -131,7 +131,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
 
     parser->state = MQTT_PARSER_STATE_CONNECT_FLAGS;
 
-    return MQTT_PARSER_RC_CONTINUE;
+    //return MQTT_PARSER_RC_CONTINUE;
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_FLAGS) {
@@ -150,7 +150,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
 
     parser->state = MQTT_PARSER_STATE_CONNECT_KEEP_ALIVE;
 
-    return MQTT_PARSER_RC_CONTINUE;
+    //return MQTT_PARSER_RC_CONTINUE;
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_KEEP_ALIVE) {
@@ -170,7 +170,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
 
     parser->state = MQTT_PARSER_STATE_CONNECT_WILL_TOPIC;
 
-    return MQTT_PARSER_RC_CONTINUE;
+    //return MQTT_PARSER_RC_CONTINUE;
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_WILL_TOPIC) {
@@ -180,7 +180,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
 
     parser->state = MQTT_PARSER_STATE_CONNECT_WILL_MESSAGE;
 
-    return MQTT_PARSER_RC_CONTINUE;
+    //return MQTT_PARSER_RC_CONTINUE;
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_WILL_MESSAGE) {
@@ -190,7 +190,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
 
     parser->state = MQTT_PARSER_STATE_CONNECT_USERNAME;
 
-    return MQTT_PARSER_RC_CONTINUE;
+    //return MQTT_PARSER_RC_CONTINUE;
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_USERNAME) {
@@ -200,7 +200,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
 
     parser->state = MQTT_PARSER_STATE_CONNECT_PASSWORD;
 
-    return MQTT_PARSER_RC_CONTINUE;
+    //return MQTT_PARSER_RC_CONTINUE;
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_PASSWORD) {
