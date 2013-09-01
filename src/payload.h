@@ -15,16 +15,13 @@ typedef struct mqtt_payload_connect_s {
   mqtt_buffer_t protocol_name;
   uint8_t protocol_version;
 
-  union {
-    uint8_t raw;
-
-    struct {
-      unsigned char username_follows:1;
-      unsigned char password_follows:1;
-      unsigned char will_follows:1;
-      unsigned char will_qos:2;
-      unsigned char clean_session:1;
-    } named;
+  struct {
+    char username_follows;
+    char password_follows;
+    char will_retain;
+    char will_qos;
+    char will;
+    char clean_session;
   } flags;
 
   uint16_t keep_alive;

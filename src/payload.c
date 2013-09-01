@@ -20,11 +20,12 @@ void mqtt_payload_dump(mqtt_payload_t* payload) {
 
     printf("  protocol version:  %d\n", payload->connect.protocol_version);
 
-    printf("  has username:      %s\n", payload->connect.flags.named.username_follows ? "true": "false");
-    printf("  has password:      %s\n", payload->connect.flags.named.password_follows ? "true": "false");
-    printf("  has will:          %s\n", payload->connect.flags.named.will_follows ? "true": "false");
-    printf("  will qos:          %d\n", payload->connect.flags.named.will_qos);
-    printf("  clean session:     %s\n", payload->connect.flags.named.clean_session ? "true": "false");
+    printf("  has username:      %s\n", payload->connect.flags.username_follows ? "true": "false");
+    printf("  has password:      %s\n", payload->connect.flags.password_follows ? "true": "false");
+    printf("  has will:          %s\n", payload->connect.flags.will ? "true": "false");
+    printf("  will qos:          %d\n", payload->connect.flags.will_qos);
+    printf("  retains will:      %s\n", payload->connect.flags.will_retain ? "true": "false");
+    printf("  clean session:     %s\n", payload->connect.flags.clean_session ? "true": "false");
 
     printf("  keep alive:        %d\n", payload->connect.keep_alive);
 
