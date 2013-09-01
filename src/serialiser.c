@@ -1,5 +1,7 @@
 #include <string.h>
 
+#include "message.h"
+
 #include "serialiser.h"
 
 void mqtt_serialiser_init(mqtt_serialiser_t* serialiser) {
