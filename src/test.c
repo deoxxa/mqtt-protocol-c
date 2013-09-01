@@ -32,12 +32,18 @@ int main(int argc, char** argv) {
 */
 
   uint8_t data[] = {
+    // type 1
     0x10,
+    // length 94
     0x5e,
+      // protocol name
       0x00, 0x06,
         0x4d, 0x51, 0x49, 0x73, 0x64, 0x70,
+      // protocol version
       0x03,
+      // flags
       0xf6,
+      // keep-alive
       0x00, 0x1e,
       // client id
       0x00, 0x05,
