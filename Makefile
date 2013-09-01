@@ -1,4 +1,4 @@
-CFLAGS += -Wall -Werror -pedantic
+CFLAGS += -Wall -Werror -pedantic -std=c99
 
 all: bin/test
 
@@ -15,4 +15,4 @@ src/serialiser.o: src/serialiser.c src/serialiser.h
 src/test.o: src/test.c
 
 bin/test: src/errors.o src/buffer.o src/header.o src/payload.o src/message.o src/parser.o src/serialiser.o src/test.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o bin/test src/errors.o src/buffer.o src/header.o src/payload.o src/message.o src/parser.o src/serialiser.o src/test.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o bin/test src/errors.o src/buffer.o src/header.o src/payload.o src/message.o src/parser.o src/serialiser.o src/test.o -lm

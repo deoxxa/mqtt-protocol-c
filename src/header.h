@@ -33,10 +33,10 @@ typedef enum mqtt_header_dup_e {
 } mqtt_header_dup_t;
 
 typedef struct mqtt_header_s {
-  mqtt_header_retain_t retain:1;
-  mqtt_qos_t qos:2;
-  mqtt_header_dup_t dup:1;
-  mqtt_header_type_t type:4;
+  mqtt_header_retain_t retain;
+  mqtt_qos_t qos;
+  mqtt_header_dup_t dup;
+  mqtt_header_type_t type;
   uint32_t length;
 } mqtt_header_t;
 
