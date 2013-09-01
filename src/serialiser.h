@@ -8,6 +8,7 @@ typedef struct mqtt_serialiser_s {
 } mqtt_serialiser_t;
 
 void mqtt_serialiser_init(mqtt_serialiser_t* serialiser);
-void mqtt_serialiser_size(mqtt_serialiser_t* serialiser, mqtt_message_t* message);
+size_t mqtt_serialiser_size(mqtt_serialiser_t* serialiser, mqtt_message_t* message);
+int mqtt_serialiser_write(mqtt_serialiser_t* serialiser, mqtt_message_t* message, uint8_t* buffer, size_t len);
 
 #endif
