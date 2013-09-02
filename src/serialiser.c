@@ -77,6 +77,24 @@ int mqtt_serialiser_write(mqtt_serialiser_t* serialiser, mqtt_message_t* message
       (message->payload.connect.flags.will_qos         << 4) +
       (message->payload.connect.flags.will             << 2) +
       (message->payload.connect.flags.clean_session    << 1);
+
+    buffer[offset++] = message->payload.connect.keep_alive >> 8;
+    buffer[offset++] = message->payload.connect.keep_alive & 0xff;
+
+    WRITE_STRING(message->payload.connect.client_identifier);
+
+    if (message->payload.connect.flags.will) {
+      WRITE_STRING(message->payload.connect.will_topic);
+      WRITE_STRING(message->payload.connect.will_message);
+    }
+
+    if (message->payload.connect.flags.username_follows) {
+      WRITE_STRING(message->payload.connect.username);
+    }
+
+    if (message->payload.connect.flags.password_follows) {
+      WRITE_STRING(message->payload.connect.password);
+    }
   }
 
   return 0;
