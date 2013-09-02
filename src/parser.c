@@ -104,12 +104,6 @@ mqtt_parser_rc_t mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* mess
     }
   }
 
-  if (parser->state == MQTT_PARSER_STATE_VARIABLE_HEADER) {
-    if (message->common.type == MQTT_TYPE_CONNECT) {
-      parser->state = MQTT_PARSER_STATE_CONNECT_PROTOCOL_NAME;
-    }
-  }
-
   if (parser->state == MQTT_PARSER_STATE_CONNECT_PROTOCOL_NAME) {
     READ_STRING(message->connect.protocol_name)
 
