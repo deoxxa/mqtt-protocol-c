@@ -99,12 +99,35 @@ mqtt_parser_rc_t mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* mess
 
         *nread += digit_bytes;
 
-        if (message->common.type == MQTT_TYPE_CONNECT) {
-          parser->state = MQTT_PARSER_STATE_CONNECT_PROTOCOL_NAME;
-        } else {
-          parser->error = MQTT_ERROR_PARSER_INVALID_MESSAGE_ID;
-
-          return MQTT_PARSER_RC_ERROR;
+        switch (message->common.type) {
+          case MQTT_TYPE_CONNECT: {
+            parser->state = MQTT_PARSER_STATE_CONNECT;
+            break;
+          }
+          case MQTT_TYPE_CONNACK: {
+            parser->state = MQTT_PARSER_STATE_CONNACK;
+            break;
+          }
+          case MQTT_TYPE_PUBLISH: {
+            parser->state = MQTT_PARSER_STATE_PUBACK;
+            break;
+          }
+          case MQTT_TYPE_PUBREC: {
+            parser->state = MQTT_PARSER_STATE_PUBREC;
+            break;
+          }
+          case MQTT_TYPE_PUBREL: {
+            parser->state = MQTT_PARSER_STATE_PUBREL;
+            break;
+          }
+          case MQTT_TYPE_PUBCOMP: {
+            parser->state = MQTT_PARSER_STATE_PUBCOMP;
+            break;
+          }
+          default: {
+            parser->error = MQTT_ERROR_PARSER_INVALID_MESSAGE_ID;
+            return MQTT_PARSER_RC_ERROR;
+          }
         }
 
         break;
