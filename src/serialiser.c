@@ -74,7 +74,7 @@ int mqtt_serialiser_write(mqtt_serialiser_t* serialiser, mqtt_message_t* message
       (message->payload.connect.flags.username_follows << 7) +
       (message->payload.connect.flags.password_follows << 6) +
       (message->payload.connect.flags.will_retain      << 5) +
-      (message->payload.connect.flags.will_qos         << 4) +
+      (message->payload.connect.flags.will_qos         << 3) +
       (message->payload.connect.flags.will             << 2) +
       (message->payload.connect.flags.clean_session    << 1);
 
