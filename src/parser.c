@@ -53,7 +53,7 @@ void mqtt_parser_buffer(mqtt_parser_t* parser, uint8_t* buffer, size_t buffer_le
   parser->buffer_length = buffer_length;
 }
 
-int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t* data, size_t len, size_t* nread) {
+mqtt_parser_rc_t mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t* data, size_t len, size_t* nread) {
   if (parser->state == MQTT_PARSER_STATE_INITIAL) {
     if ((len - *nread) < 1) {
       return MQTT_PARSER_RC_INCOMPLETE;
