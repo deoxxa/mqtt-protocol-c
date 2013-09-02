@@ -28,6 +28,7 @@ typedef enum mqtt_parser_state_e {
   MQTT_PARSER_STATE_CONNECT_WILL_MESSAGE = 9,
   MQTT_PARSER_STATE_CONNECT_USERNAME = 10,
   MQTT_PARSER_STATE_CONNECT_PASSWORD = 11,
+  MQTT_PARSER_STATE_CONNACK = 12,
 } mqtt_parser_state_t;
 
 typedef struct mqtt_parser_s {

@@ -197,6 +197,21 @@ mqtt_parser_rc_t mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* mess
     return MQTT_PARSER_RC_DONE;
   }
 
+  if (parser->state == MQTT_PARSER_STATE_CONNACK) {
+    if ((len - *nread) < 2) {
+      return MQTT_PARSER_RC_INCOMPLETE;
+    }
+
+    message->connack._unused     = data[*nread];
+    message->connack.return_code = data[*nread + 1];
+
+    *nread += 2;
+
+    parser->state = MQTT_PARSER_STATE_INITIAL;
+
+    return MQTT_PARSER_RC_DONE;
+  }
+
   parser->error = MQTT_ERROR_PARSER_INVALID_STATE;
 
   return MQTT_PARSER_RC_ERROR;

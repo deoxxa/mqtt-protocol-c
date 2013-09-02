@@ -49,6 +49,8 @@ size_t mqtt_serialiser_size(mqtt_serialiser_t* serialiser, mqtt_message_t* messa
       len += message->connect.will_topic.length;
       len += message->connect.will_message.length;
     }
+  } else if (message->common.type == MQTT_TYPE_CONNACK) {
+    len += 2;
   }
 
   return len;
@@ -95,6 +97,9 @@ int mqtt_serialiser_write(mqtt_serialiser_t* serialiser, mqtt_message_t* message
     if (message->connect.flags.password_follows) {
       WRITE_STRING(message->connect.password);
     }
+  } else if (message->common.type == MQTT_TYPE_CONNACK) {
+    buffer[offset++] = message->connack._unused;
+    buffer[offset++] = message->connack.return_code;
   }
 
   return 0;
