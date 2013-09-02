@@ -164,7 +164,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_CLIENT_IDENTIFIER) {
-    READ_STRING(message->connect.client_identifier)
+    READ_STRING(message->connect.client_id)
 
     parser->state = MQTT_PARSER_STATE_CONNECT_WILL_TOPIC;
 

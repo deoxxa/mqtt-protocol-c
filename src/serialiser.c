@@ -32,7 +32,7 @@ size_t mqtt_serialiser_size(mqtt_serialiser_t* serialiser, mqtt_message_t* messa
     len += 8;
 
     len += message->connect.protocol_name.length;
-    len += message->connect.client_identifier.length;
+    len += message->connect.client_id.length;
 
     if (message->connect.flags.username_follows) {
       len += 2;
@@ -81,7 +81,7 @@ int mqtt_serialiser_write(mqtt_serialiser_t* serialiser, mqtt_message_t* message
     buffer[offset++] = message->connect.keep_alive >> 8;
     buffer[offset++] = message->connect.keep_alive & 0xff;
 
-    WRITE_STRING(message->connect.client_identifier);
+    WRITE_STRING(message->connect.client_id);
 
     if (message->connect.flags.will) {
       WRITE_STRING(message->connect.will_topic);

@@ -30,8 +30,8 @@ void mqtt_message_dump(mqtt_message_t* message) {
 
     printf("  keep alive:        %d\n", message->connect.keep_alive);
 
-    printf("  client identifier: ");
-    mqtt_buffer_dump(&(message->connect.client_identifier));
+    printf("  client id:         ");
+    mqtt_buffer_dump(&(message->connect.client_id));
     printf("\n");
 
     printf("  will topic:        ");

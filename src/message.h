@@ -67,7 +67,7 @@ typedef union mqtt_message_u {
 
     uint16_t keep_alive;
 
-    mqtt_buffer_t client_identifier;
+    mqtt_buffer_t client_id;
 
     mqtt_buffer_t will_topic;
     mqtt_buffer_t will_message;
