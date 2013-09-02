@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "message.h"
 #include "parser.h"
@@ -109,6 +110,9 @@ int main(int argc, char** argv) {
     printf("%02x ", packet[i]);
   }
   printf("\n");
+
+  printf("\n");
+  printf("difference: %d\n", memcmp(data, packet, packet_length));
 
   return 0;
 }
