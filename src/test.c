@@ -97,5 +97,18 @@ int main(int argc, char** argv) {
   printf("\n");
   mqtt_message_dump(&message);
 
+  printf("\n");
+
+  size_t packet_length = mqtt_serialiser_size(&serialiser, &message);
+  uint8_t* packet = malloc(packet_length);
+  mqtt_serialiser_write(&serialiser, &message, packet, packet_length);
+
+  printf("packet length: %zu\n", packet_length);
+  printf("packet data:   ");
+  for (int i=0;i<packet_length;++i) {
+    printf("%02x ", packet[i]);
+  }
+  printf("\n");
+
   return 0;
 }
