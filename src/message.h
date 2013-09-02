@@ -38,6 +38,17 @@ typedef enum mqtt_dup_e {
   MQTT_DUP_TRUE = 1,
 } mqtt_dup_t;
 
+typedef struct mqtt_topic_s {
+  struct mqtt_topic_s* next;
+  mqtt_buffer_t name;
+} mqtt_topic_t;
+
+typedef struct mqtt_topicpair_s {
+  struct mqtt_topicpair_s* next;
+  mqtt_buffer_t name;
+  mqtt_qos_t qos;
+} mqtt_topicpair_t;
+
 #define MQTT_MESSAGE_COMMON_FIELDS \
   mqtt_retain_t retain; \
   mqtt_qos_t qos; \
@@ -82,6 +93,78 @@ typedef union mqtt_message_u {
     uint8_t _unused;
     uint8_t return_code;
   } connack;
+
+  struct {
+    MQTT_MESSAGE_COMMON_FIELDS
+
+    mqtt_buffer_t topic_name;
+    uint16_t message_id;
+
+    mqtt_buffer_t content;
+  } publish;
+
+  struct {
+    MQTT_MESSAGE_COMMON_FIELDS
+
+    uint16_t message_id;
+  } puback;
+
+  struct {
+    MQTT_MESSAGE_COMMON_FIELDS
+
+    uint16_t message_id;
+  } pubrec;
+
+  struct {
+    MQTT_MESSAGE_COMMON_FIELDS
+
+    uint16_t message_id;
+  } pubrel;
+
+  struct {
+    MQTT_MESSAGE_COMMON_FIELDS
+
+    uint16_t message_id;
+  } pubcomp;
+
+  struct {
+    MQTT_MESSAGE_COMMON_FIELDS
+
+    uint16_t message_id;
+    mqtt_topicpair_t* topics;
+  } subscribe;
+
+  struct {
+    MQTT_MESSAGE_COMMON_FIELDS
+
+    uint16_t message_id;
+    mqtt_topicpair_t* topics;
+  } suback;
+
+  struct {
+    MQTT_MESSAGE_COMMON_FIELDS
+
+    uint16_t message_id;
+    mqtt_topic_t* topics;
+  } unsubscribe;
+
+  struct {
+    MQTT_MESSAGE_COMMON_FIELDS
+
+    uint16_t message_id;
+  } unsuback;
+
+  struct {
+    MQTT_MESSAGE_COMMON_FIELDS
+  } pingreq;
+
+  struct {
+    MQTT_MESSAGE_COMMON_FIELDS
+  } pingresp;
+
+  struct {
+    MQTT_MESSAGE_COMMON_FIELDS
+  } disconnect;
 } mqtt_message_t;
 
 void mqtt_message_init(mqtt_message_t* message);
