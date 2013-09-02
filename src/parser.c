@@ -95,7 +95,13 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
 
     *nread += digit_bytes;
 
-    parser->state = MQTT_PARSER_STATE_VARIABLE_HEADER;
+    if (message->common.type == MQTT_TYPE_CONNECT) {
+      parser->state = MQTT_PARSER_STATE_CONNECT_PROTOCOL_NAME;
+    } else {
+      parser->error = MQTT_ERROR_PARSER_INVALID_MESSAGE_ID;
+
+      return MQTT_PARSER_RC_ERROR;
+    }
   }
 
   if (parser->state == MQTT_PARSER_STATE_VARIABLE_HEADER) {
