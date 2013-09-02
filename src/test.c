@@ -94,8 +94,6 @@ int main(int argc, char** argv) {
   printf("  loops: %d\n", loops);
   printf("\n");
 
-  printf("message info\n");
-  printf("\n");
   mqtt_message_dump(&message);
 
   printf("\n");

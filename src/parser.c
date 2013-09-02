@@ -59,12 +59,10 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
       return MQTT_PARSER_RC_INCOMPLETE;
     }
 
-    message->header.retain = (data[*nread + 0] >> 0) & 0x01;
-    message->header.qos    = (data[*nread + 0] >> 1) & 0x03;
-    message->header.dup    = (data[*nread + 0] >> 3) & 0x01;
-    message->header.type   = (data[*nread + 0] >> 4) & 0x0f;
-
-    message->payload.type  = message->header.type;
+    message->common.retain = (data[*nread + 0] >> 0) & 0x01;
+    message->common.qos    = (data[*nread + 0] >> 1) & 0x03;
+    message->common.dup    = (data[*nread + 0] >> 3) & 0x01;
+    message->common.type   = (data[*nread + 0] >> 4) & 0x0f;
 
     *nread += 1;
 
@@ -89,7 +87,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
       multiplier *= 128;
 
       if (data[*nread + digit_bytes - 1] <= 0x7f) {
-        message->header.length = value;
+        message->common.length = value;
 
         *nread += digit_bytes;
 
@@ -105,7 +103,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
   }
 
   if (parser->state == MQTT_PARSER_STATE_VARIABLE_HEADER) {
-    if (message->header.type == MQTT_MESSAGE_TYPE_CONNECT) {
+    if (message->common.type == MQTT_TYPE_CONNECT) {
       parser->state = MQTT_PARSER_STATE_CONNECT_PROTOCOL_NAME;
 
       //return MQTT_PARSER_RC_CONTINUE;
@@ -113,7 +111,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_PROTOCOL_NAME) {
-    READ_STRING(message->payload.connect.protocol_name)
+    READ_STRING(message->connect.protocol_name)
 
     parser->state = MQTT_PARSER_STATE_CONNECT_PROTOCOL_VERSION;
 
@@ -125,7 +123,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
       return MQTT_PARSER_RC_INCOMPLETE;
     }
 
-    message->payload.connect.protocol_version = data[*nread];
+    message->connect.protocol_version = data[*nread];
 
     *nread += 1;
 
@@ -139,12 +137,12 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
       return MQTT_PARSER_RC_INCOMPLETE;
     }
 
-    message->payload.connect.flags.username_follows = (data[*nread] >> 7) & 0x01;
-    message->payload.connect.flags.password_follows = (data[*nread] >> 6) & 0x01;
-    message->payload.connect.flags.will_retain      = (data[*nread] >> 5) & 0x01;
-    message->payload.connect.flags.will_qos         = (data[*nread] >> 4) & 0x02;
-    message->payload.connect.flags.will             = (data[*nread] >> 2) & 0x01;
-    message->payload.connect.flags.clean_session    = (data[*nread] >> 1) & 0x01;
+    message->connect.flags.username_follows = (data[*nread] >> 7) & 0x01;
+    message->connect.flags.password_follows = (data[*nread] >> 6) & 0x01;
+    message->connect.flags.will_retain      = (data[*nread] >> 5) & 0x01;
+    message->connect.flags.will_qos         = (data[*nread] >> 4) & 0x02;
+    message->connect.flags.will             = (data[*nread] >> 2) & 0x01;
+    message->connect.flags.clean_session    = (data[*nread] >> 1) & 0x01;
 
     *nread += 1;
 
@@ -158,7 +156,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
       return MQTT_PARSER_RC_INCOMPLETE;
     }
 
-    message->payload.connect.keep_alive = (data[*nread] << 8) + data[*nread + 1];
+    message->connect.keep_alive = (data[*nread] << 8) + data[*nread + 1];
 
     *nread += 2;
 
@@ -166,7 +164,7 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_CLIENT_IDENTIFIER) {
-    READ_STRING(message->payload.connect.client_identifier)
+    READ_STRING(message->connect.client_identifier)
 
     parser->state = MQTT_PARSER_STATE_CONNECT_WILL_TOPIC;
 
@@ -174,8 +172,8 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_WILL_TOPIC) {
-    if (message->payload.connect.flags.will) {
-      READ_STRING(message->payload.connect.will_topic)
+    if (message->connect.flags.will) {
+      READ_STRING(message->connect.will_topic)
     }
 
     parser->state = MQTT_PARSER_STATE_CONNECT_WILL_MESSAGE;
@@ -184,8 +182,8 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_WILL_MESSAGE) {
-    if (message->payload.connect.flags.will) {
-      READ_STRING(message->payload.connect.will_message)
+    if (message->connect.flags.will) {
+      READ_STRING(message->connect.will_message)
     }
 
     parser->state = MQTT_PARSER_STATE_CONNECT_USERNAME;
@@ -194,8 +192,8 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_USERNAME) {
-    if (message->payload.connect.flags.username_follows) {
-      READ_STRING(message->payload.connect.username)
+    if (message->connect.flags.username_follows) {
+      READ_STRING(message->connect.username)
     }
 
     parser->state = MQTT_PARSER_STATE_CONNECT_PASSWORD;
@@ -204,8 +202,8 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
   }
 
   if (parser->state == MQTT_PARSER_STATE_CONNECT_PASSWORD) {
-    if (message->payload.connect.flags.password_follows) {
-      READ_STRING(message->payload.connect.password)
+    if (message->connect.flags.password_follows) {
+      READ_STRING(message->connect.password)
     }
 
     parser->state = MQTT_PARSER_STATE_INITIAL;
