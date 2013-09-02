@@ -83,21 +83,19 @@ int mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t*
 
       remaining_length += (data[*nread + digit_bytes - 1] & 0x7f) * multiplier;
       multiplier *= 128;
-
-      if (data[*nread + digit_bytes - 1] <= 0x7f) {
-        message->common.length = remaining_length;
-
-        *nread += digit_bytes;
-
-        parser->state = MQTT_PARSER_STATE_VARIABLE_HEADER;
-
-        return MQTT_PARSER_RC_CONTINUE;
-      }
     } while (data[*nread + digit_bytes - 1] >= 0x80 && digit_bytes < 4);
 
-    parser->error = MQTT_ERROR_PARSER_INVALID_REMAINING_LENGTH;
+    if (data[*nread + digit_bytes - 1] >= 0x80) {
+      parser->error = MQTT_ERROR_PARSER_INVALID_REMAINING_LENGTH;
 
-    return MQTT_PARSER_RC_ERROR;
+      return MQTT_PARSER_RC_ERROR;
+    }
+
+    message->common.length = remaining_length;
+
+    *nread += digit_bytes;
+
+    parser->state = MQTT_PARSER_STATE_VARIABLE_HEADER;
   }
 
   if (parser->state == MQTT_PARSER_STATE_VARIABLE_HEADER) {
