@@ -67,40 +67,54 @@ mqtt_serialiser_rc_t mqtt_serialiser_write(mqtt_serialiser_t* serialiser, mqtt_m
     remaining_length >>= 7;
   } while (remaining_length > 0);
 
-  if (message->common.type == MQTT_TYPE_CONNECT) {
-    WRITE_STRING(message->connect.protocol_name);
+  switch (message->common.type) {
+    case MQTT_TYPE_CONNECT: {
+      WRITE_STRING(message->connect.protocol_name);
 
-    buffer[offset++] = message->connect.protocol_version;
+      buffer[offset++] = message->connect.protocol_version;
 
-    buffer[offset++] =
-      (message->connect.flags.username_follows << 7) +
-      (message->connect.flags.password_follows << 6) +
-      (message->connect.flags.will_retain      << 5) +
-      (message->connect.flags.will_qos         << 3) +
-      (message->connect.flags.will             << 2) +
-      (message->connect.flags.clean_session    << 1);
+      buffer[offset++] =
+        (message->connect.flags.username_follows << 7) +
+        (message->connect.flags.password_follows << 6) +
+        (message->connect.flags.will_retain      << 5) +
+        (message->connect.flags.will_qos         << 3) +
+        (message->connect.flags.will             << 2) +
+        (message->connect.flags.clean_session    << 1);
 
-    buffer[offset++] = message->connect.keep_alive >> 8;
-    buffer[offset++] = message->connect.keep_alive & 0xff;
+      buffer[offset++] = message->connect.keep_alive >> 8;
+      buffer[offset++] = message->connect.keep_alive & 0xff;
 
-    WRITE_STRING(message->connect.client_id);
+      WRITE_STRING(message->connect.client_id);
 
-    if (message->connect.flags.will) {
-      WRITE_STRING(message->connect.will_topic);
-      WRITE_STRING(message->connect.will_message);
+      if (message->connect.flags.will) {
+        WRITE_STRING(message->connect.will_topic);
+        WRITE_STRING(message->connect.will_message);
+      }
+
+      if (message->connect.flags.username_follows) {
+        WRITE_STRING(message->connect.username);
+      }
+
+      if (message->connect.flags.password_follows) {
+        WRITE_STRING(message->connect.password);
+      }
+
+      break;
     }
 
-    if (message->connect.flags.username_follows) {
-      WRITE_STRING(message->connect.username);
+    case MQTT_TYPE_CONNACK: {
+      buffer[offset++] = message->connack._unused;
+      buffer[offset++] = message->connack.return_code;
+
+      break;
     }
 
-    if (message->connect.flags.password_follows) {
-      WRITE_STRING(message->connect.password);
+    default: {
+      serialiser->error = MQTT_SERIALISER_ERROR_INVALID_MESSAGE_ID;
+
+      return MQTT_SERIALISER_RC_ERROR;
     }
-  } else if (message->common.type == MQTT_TYPE_CONNACK) {
-    buffer[offset++] = message->connack._unused;
-    buffer[offset++] = message->connack.return_code;
   }
 
-  return 0;
+  return MQTT_SERIALISER_RC_SUCCESS;
 }
