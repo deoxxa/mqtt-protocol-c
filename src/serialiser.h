@@ -9,12 +9,8 @@ typedef enum mqtt_serialiser_rc_e {
   MQTT_SERIALISER_RC_SUCCESS,
 } mqtt_serialiser_rc_t;
 
-typedef enum mqtt_serialiser_error_e {
-  MQTT_SERIALISER_ERROR_INVALID_MESSAGE_ID,
-} mqtt_serialiser_error_t;
-
 typedef struct mqtt_serialiser_s {
-  mqtt_serialiser_error_t error;
+  mqtt_error_t error;
 } mqtt_serialiser_t;
 
 void mqtt_serialiser_init(mqtt_serialiser_t* serialiser);

@@ -110,7 +110,7 @@ mqtt_serialiser_rc_t mqtt_serialiser_write(mqtt_serialiser_t* serialiser, mqtt_m
     }
 
     default: {
-      serialiser->error = MQTT_SERIALISER_ERROR_INVALID_MESSAGE_ID;
+      serialiser->error = MQTT_ERROR_SERIALISER_INVALID_MESSAGE_ID;
 
       return MQTT_SERIALISER_RC_ERROR;
     }

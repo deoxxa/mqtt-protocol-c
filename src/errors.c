@@ -4,9 +4,10 @@
 
 const char* mqtt_error_strings[] = {
   NULL,
-  "the parser was left in an invalid state",
-  "the remaining length field was invalid",
-  "the message id was invalid",
+  "[parser] left in an invalid state",
+  "[parser] remaining length field was invalid",
+  "[parser] message id was invalid",
+  "[serialiser] message if was invalid",
 };
 
 const char* mqtt_error_string(mqtt_error_t error) {
