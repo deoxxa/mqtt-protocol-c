@@ -56,7 +56,7 @@ size_t mqtt_serialiser_size(mqtt_serialiser_t* serialiser, mqtt_message_t* messa
   return len;
 }
 
-int mqtt_serialiser_write(mqtt_serialiser_t* serialiser, mqtt_message_t* message, uint8_t* buffer, size_t len) {
+mqtt_serialiser_rc_t mqtt_serialiser_write(mqtt_serialiser_t* serialiser, mqtt_message_t* message, uint8_t* buffer, size_t len) {
   unsigned int offset = 0;
 
   buffer[offset++] = message->common.retain + (message->common.qos << 1) + (message->common.dup << 3) + (message->common.type << 4);
