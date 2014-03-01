@@ -65,7 +65,7 @@ void mqtt_parser_init(mqtt_parser_t* parser);
 void mqtt_parser_buffer(mqtt_parser_t* parser, uint8_t* buffer, size_t buffer_length);
 ```
 
-### matt_parser_execute
+### mqtt_parser_execute
 
 ```c
 mqtt_parser_rc_t mqtt_parser_execute(mqtt_parser_t* parser, mqtt_message_t* message, uint8_t* data, size_t len, size_t* nread);
